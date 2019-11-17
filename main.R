@@ -70,15 +70,15 @@ fitted = rand_forest(mode = "regression",
   fit(Y ~ ., data = df)
 
 
-explainer = DALEX::explain(fitted,
-                           data = df %>% select(-Y),
-                           y = df %>% pull(Y),
-                           label = "Random Forest")
+explainer = explain(fitted,
+                    data = df %>% select(-Y),
+                    y = df %>% pull(Y),
+                    label = "Random Forest")
 
 
-fi = ingredients::feature_importance(explainer, 
-                                     loss_function = loss_root_mean_square,
-                                     type = "raw")
+fi = feature_importance(explainer, 
+                        loss_function = loss_root_mean_square,
+                        type = "raw")
 fi
 
 plot(fi)
@@ -157,7 +157,7 @@ pdp %>%
   theme(legend.position = "none")
 
 
-save_plot("figure/sim2_pdp.png")
+save_plot("figure/sim2_pdp.png", height = 6)
 
 
 ice = ceteris_paribus(explainer, 
@@ -166,21 +166,20 @@ ice = ceteris_paribus(explainer,
 
 
 ice %>% 
-  plot(alpha = 0.5, size = 0.5) + 
+  plot(alpha = 0.5, size = 0.5, color = colors_discrete_drwhy(1)) + 
   geom_abline(slope = -5, color = "gray70", size = 1) + 
   geom_abline(slope = 5, color = "gray70", size = 1) +
-  scale_color_manual(name = "", values = palette_OkabeIto[5]) + 
   scale_y_continuous(breaks = seq(-6, 6, 2),
                      limits = c(-6, 6)) + 
   theme_scatter() +
   theme(legend.position = "none")
 
-save_plot("figure/sim2_ice.png")
+save_plot("figure/sim2_ice.png", height = 6)
 
 
-stratified_pdp = aggregate_profiles(ice, groups = "X3")
+conditional_pdp = aggregate_profiles(ice, groups = "X3")
 
-stratified_pdp %>% 
+conditional_pdp %>% 
   plot() + 
   geom_abline(slope = -5, color = "gray70", size = 1) + 
   geom_abline(slope = 5, color = "gray70", size = 1) +
@@ -189,7 +188,7 @@ stratified_pdp %>%
   theme_scatter() +
   theme(legend.position = "none")
 
-save_plot("figure/sim2_stratified_pdp.png")
+save_plot("figure/sim2_comnditional_pdp.png", height = 6)
 
 
 clustered_ice = cluster_profiles(ice, k = 2)
@@ -203,7 +202,7 @@ clustered_ice %>%
   theme_scatter() +
   theme(legend.position = "none")
 
-save_plot("figure/sim2_clustered_ice.png")
+save_plot("figure/sim2_clustered_ice.png", height = 6)
 
 
 
